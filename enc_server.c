@@ -76,35 +76,80 @@ int main(int argc, char *argv[]){
     memset(buffer, '\0', 256);
     // Read the client's message from the socket
     charsRead = recv(connectionSocket, buffer, 256, 0); 
+    printf("this is buffer %s\n", buffer);
     if (charsRead < 0){
       error("ERROR reading from socket");
     }
+
+    // FILE *fp  = fopen(argv[1], "r"); // read only 
+    // char firstFile[256]; 
+    // fgets(firstFile, 256, (FILE*)fp);
+    // // printf("%s", strlen(line));
+    // fclose(fp);
     int index;
-    char text[strlen(buffer)];
+    char text[256];
     for (int i = 0; i < strlen(buffer); i++){
-      if (buffer[i] == 10){
+      if (buffer[i] != 10){
+      text[i] = buffer[i];
+      }
+      // printf("%c",text[i]);
+      else if (buffer[i] == 10){
         index = i+1;
         printf("this is index %d \n", i+1);
         break;
       }
     }
-
+    printf("text %s \n",text);
+    char key[256];
     int start = 0;
     for (int i = index; i < strlen(buffer); i++){
-      text[start] = buffer[i];
+      key[start] = buffer[i];
       start++;
     }
-    printf("this is text %s \n", text);
-    char *key;
-    char s[2] = "\n";
-    key = strtok(buffer, s);
-    printf("this is key %s \n",key);
+    printf("!!!! %s\n",key);
+    
+    FILE *fp  = fopen(text, "r"); // read only 
+    char firstFile[70000]; 
+    fgets(firstFile, 70000, (FILE*)fp);
+    // printf("%s", strlen(line));
+    fclose(fp);
 
-    // FILE *fp  = fopen(buffer, "r"); // read only 
-    // char firstFile[70000]; 
-    // fgets(firstFile, 70000, (FILE*)fp);
-    // // printf("%s", strlen(line));
-    // fclose(fp);
+    // char s[2] = "\n";
+    // key = strtok(buffer, s);
+    // printf("this is key %s \n",key);
+
+    FILE *f  = fopen(key, "r"); // read only 
+    char secondFile[70000]; 
+    fgets(secondFile, 70000, (FILE*)f);
+    // printf("%s", strlen(line));
+    fclose(f);
+
+    printf(" textfile %s\n", firstFile);
+    printf("secibdfile %s\n", secondFile);
+
+    char cipher[70000];
+    char spaces[70000];
+    char s = 0;
+    char t = 0;
+    char uncipher[70000];
+    for(int i = 0; i < strlen(firstFile); i++){
+      if (firstFile[i] == 32){
+        spaces[s] = i;
+        s++;
+      }
+      if (secondFile[i] == 32){
+        uncipher[t] = i;
+        t++;
+      }
+      else
+      {
+        cipher[i] = secondFile[i] + firstFile[i] - 65;
+        if (cipher[i] > 90){
+          cipher[i] -= 26;
+        }
+      }
+    }
+    printf("cipher %s\n", cipher);
 
     // charsRead = recv(connectionSocket, buffer, 256, 0); 
     // if (charsRead < 0){

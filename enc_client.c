@@ -72,35 +72,31 @@ int main(int argc, char *argv[]) {
   // Get input message from user
   // printf("CLIENT: Enter text to send to the server, and then hit enter: ");
   FILE *fp  = fopen(argv[1], "r"); // read only 
-  char firstFile[256]; 
-  fgets(firstFile, 256, (FILE*)fp);
+  char firstFile[70000]; 
+  fgets(firstFile, 70000, (FILE*)fp);
   // printf("%s", strlen(line));
   fclose(fp);
 
-
   FILE *f  = fopen(argv[2], "r"); // read only 
-  char secondFile[256]; 
-  memset(secondFile, '\0', sizeof(secondFile));
-
-  fgets(secondFile, 256, (FILE*)f);
+  char secondFile[70000]; 
+  fgets(secondFile, 70000, (FILE*)f);
   // printf("%s", text );
   fclose(f);
 
   if (strlen(secondFile) < strlen(firstFile)){
-      printf("key file is too short!\n");
+      fprintf(stderr,"key file is too short!\n");
       exit(1);
   }
-
   for (int i = 0; i < strlen(firstFile); i++){
     if (65 > firstFile[i]) {
       if (firstFile[i] != 10)
       {
-        printf("found a bad character\n");
+        fprintf(stderr,"found a bad character\n");
         exit(1);
       }
     }
     else if (90 < firstFile[i]) {
-        printf("found a bad character\n");
+        fprintf(stderr,"found a bad character\n");
         exit(1);
     }
   }
@@ -110,7 +106,7 @@ int main(int argc, char *argv[]) {
       {
         if (secondFile[i] != 10)
         {
-        printf("found a bad character in key\n");
+        fprintf(stderr,"found a bad character in key\n");
         exit(1);
         }
 
@@ -121,7 +117,7 @@ int main(int argc, char *argv[]) {
       {
         if (secondFile[i] != 10)
         {
-        printf("found a bad character in key\n");
+        fprintf(stderr,"found a bad character in key\n");
         exit(1);
         }
       }
@@ -137,8 +133,12 @@ int main(int argc, char *argv[]) {
   // Send message to server
   // Write to the server
   strcat(secondFile, firstFile);
-  // printf("%s",argv[1]);
-  charsWritten = send(socketFD, secondFile, strlen(secondFile), 0); 
+  char names[256];
+  strcpy(names, argv[1]);
+  strcat(names, "\n");
+  strcat(names, argv[2]);
+
+  charsWritten = send(socketFD, names, strlen(secondFile), 0); 
   if (charsWritten < 0){
     error("CLIENT: ERROR writing to socket");
   }
@@ -154,14 +154,14 @@ int main(int argc, char *argv[]) {
   if (charsRead < 0){
     error("CLIENT: ERROR reading from socket");
   }
-//   if (argc > 4){
-//     FILE *file  = fopen(argv[5], "r"); // read only 
-//  // open dev null for exec
-//     printf("%s\n", secondFile);
-//   }
-//   else{
-//     printf("%s", secondFile);
-//   }
+  if (argc > 4){
+    FILE *file  = fopen(argv[5], "r"); // read only 
+ // open dev null for exec
+    printf("%s\n", secondFile);
+  }
+  else{
+    printf("%s", secondFile);
+  }
   printf("CLIENT: I received this from the server: \"%s\"\n", secondFile);
 
   // Close the socket
