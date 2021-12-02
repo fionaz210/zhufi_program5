@@ -89,24 +89,30 @@ int main(int argc, char *argv[]) {
   }
   for (int i = 0; i < strlen(firstFile); i++){
     if (65 > firstFile[i]) {
-      if (firstFile[i] != 10)
+      if (firstFile[i] != 32)
       {
-        fprintf(stderr,"found a bad character\n");
-        exit(1);
+        if (firstFile[i] != 10)
+        {
+          printf("1character%i at index %d",firstFile[i], i);
+          fprintf(stderr,"found a bad character\n");
+          exit(1);
+        }
       }
     }
     else if (90 < firstFile[i]) {
+        printf("2character%c at index %d",firstFile[i], i);
         fprintf(stderr,"found a bad character\n");
         exit(1);
     }
   }
+  printf("this is end of firstfile %s\n", firstFile);
   for (int i = 0; i < strlen(secondFile); i++){
     if (65 > secondFile[i]) {
       if (secondFile[i] != 32)
       {
         if (secondFile[i] != 10)
         {
-        fprintf(stderr,"found a bad character in key\n");
+        fprintf(stderr,"1found a bad character in key %s at index %i\n",secondFile[i], i);
         exit(1);
         }
 
@@ -117,12 +123,13 @@ int main(int argc, char *argv[]) {
       {
         if (secondFile[i] != 10)
         {
-        fprintf(stderr,"found a bad character in key\n");
+        fprintf(stderr,"2found a bad character in key %c at index %i\n",secondFile[i], i);
         exit(1);
         }
       }
     }
   }
+  printf("this is end of ss  %s\n", secondFile);
   // printf("this is second file %s", secondFile);
 
 
@@ -134,10 +141,10 @@ int main(int argc, char *argv[]) {
 
   // Send message to server
   // Write to the server
-  printf("length of second file is %d", strlen(secondFile));
+  // printf("length of second file is %d", strlen(secondFile));
 
   strcat(secondFile, firstFile);
-  printf("length of first+second file is %d", strlen(secondFile));
+  // printf("length of first+second file is %d", strlen(secondFile));
   // char names[256];
   // strcpy(names, argv[1]);
   // strcat(names, "\n");
@@ -149,7 +156,7 @@ int main(int argc, char *argv[]) {
     memset(buffer, '\0', 100);
     for (i = 0; i < 10; i++){
       buffer[i] = secondFile[index];
-      if (index==strlen(secondFile)){
+      if (index==strlen(secondFile)-1){
         buffer[i] = 64;
       }
       // if(secondFile[index] != 10){
@@ -165,12 +172,12 @@ int main(int argc, char *argv[]) {
       // }
       index++;
     }
-    printf("second file from client: %s\n", buffer);
+    printf("buffer from client: %s\n", buffer);
     charsWritten = send(socketFD, buffer, 10, 0); 
     if (charsWritten < 0){
       error("CLIENT: ERROR writing to socket");
     }
-    if (charsWritten < 0){
+    if (charsWritten < 10){
       printf("CLIENT: WARNING: Not all data written to socket!\n");
     }
   }
@@ -220,8 +227,6 @@ int main(int argc, char *argv[]) {
   else{
     printf("%s", secondFile);
   }
-  printf("CLIENT: I received this from the server: \"%s\"\n", secondFile);
-
   // Close the socket
   close(socketFD); 
   return 0;

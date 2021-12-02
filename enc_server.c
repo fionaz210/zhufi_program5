@@ -80,7 +80,7 @@ int main(int argc, char *argv[]){
     char copy[70000];
     while(term != 1)
     { 
-      memset(buffer, '\0', 1000);
+      memset(buffer, '\0', 100);
       charsRead = recv(connectionSocket, buffer, 10, 0); 
       // printf("this is buffer %s\n", buffer);
       if (charsRead < 0){
@@ -139,30 +139,30 @@ int main(int argc, char *argv[]){
     // printf(" textfile %s\n", firstFile);
     // printf("secibdfile %s\n", secondFile);
 
-    // char cipher[1000];
-    // char uncipher[1000];
-    // char spaces[1000];
+    char cipher[70000];
+    // char uncipher[70000];
+    // char spaces[70000];
     // int t = 0;
     // int s = 0;
-    // int x = 0;
-    // for(int i = 0; i < strlen(firstFile); i++){
-    //   if (firstFile[i] == 32){
-    //     spaces[t] = i;
-    //     t++;
-    //   }      
-    //   if (secondFile[i] == 32){
-    //     uncipher[s] = i;
-    //     s++;
-    //   }
-    //   else{
-    //     cipher[x] = secondFile[i] + firstFile[i] - 65;
-    //     if (cipher[x] > 90){
-    //       cipher[x] -= 26;
-    //     }
-    //     x++;
-    //   }
-    // }
-    // printf("cipher %s\n", cipher);
+    int x = 0;
+    for(int i = 0; i < strlen(text); i++){
+      if (text[i] == 32){
+        cipher[x] = key[i];
+      }      
+      if (key[i] == 32){
+        printf("key %c\n",key[i]);
+        printf("text %c\n",text[i]);
+        cipher[x] = text[i];
+      }
+      else{ 
+      cipher[x] = key[i] + text[i] - 65;
+      if (cipher[x] > 90){
+        cipher[x] -= 26;
+      }
+      x++;
+      }
+    }
+    printf("cipher %s\n", cipher);
 
     // charsRead = recv(connectionSocket, buffer, 256, 0); 
     // if (charsRead < 0){
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]){
 
     // Send a Success message back to the client
     charsRead = send(connectionSocket, 
-                    "hi", 1000, 0); 
+                    cipher, 1000, 0); 
     if (charsRead < 0){
       error("ERROR writing to socket");
     }
