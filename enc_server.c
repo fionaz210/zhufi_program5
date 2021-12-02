@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
     { 
       memset(buffer, '\0', 1000);
       charsRead = recv(connectionSocket, buffer, 10, 0); 
-      printf("this is buffer %s\n", buffer);
+      // printf("this is buffer %s\n", buffer);
       if (charsRead < 0){
         error("ERROR reading from socket");
       }
@@ -99,64 +99,35 @@ int main(int argc, char *argv[]){
     }
     printf("this is copy %s\n", copy);
 
-    // char stuff[70000];
-    // int stop = 0;
-    // int count = 0;
-    // char key[70000];
-    // char temp[70000];
-    // while(stop != 1)
-    // { 
-    //   memset(temp, '\0', 1000);
-    //   charsRead = recv(connectionSocket, temp, 10, 0); 
-    //   printf("this is key %s\n", temp);
-    //   if (charsRead < 0){
-    //     error("ERROR reading from socket");
-    //   }
-    //   for (int i = 0; i < strlen(temp); i++){
-    //     if (temp[i] != 64){
-    //       key[count] = temp[i];
-    //       count++;
-    //     }
-    //     else{
-    //       stop = 1;
-    //       break;
-    //     }
-    //   }
-    //   // if (counter = 0){
-    //   //   strcpy(copy, buffer);
-    //   // }
-    //   // else{
-    //   //   strcat(copy, buffer);
-    //   // }
-    //   // for (int i = 0; i < strlen(buffer); i++){
-    //   //   if (buffer[i] == 64){
-    //   //     term = 1;
-    //   //   }
-    //   // }
-    // }
-    // printf("this is key %s\n", key);
 
+    int index;
+    char key[70000];
+    for (int i = 0; i < strlen(copy); i++){
+      if (copy[i] != 10){
+      key[i] = copy[i];
+      }
+      // printf("%c",text[i]);
+      else if (copy[i] == 10){
+        index = i+1;
+        printf("this is index %d \n", i+1);
+        break;
+      }
+    }
+    int i = 0;
+    char text[70000];
+    for (index; index < strlen(copy); index++){
+      if (copy[index] != 64){
+      text[i] = copy[index];
+      i++;
+      }
+      // printf("%c",text[i]);
+      else if (copy[index] == 64){
+        break;
+      }
+    }
 
-
-    // FILE *fp  = fopen(argv[1], "r"); // read only 
-    // char firstFile[256]; 
-    // fgets(firstFile, 256, (FILE*)fp);
-    // // printf("%s", strlen(line));
-    // fclose(fp);
-    // int index;
-    // char text[256];
-    // for (int i = 0; i < strlen(buffer); i++){
-    //   if (buffer[i] != 10){
-    //   text[i] = buffer[i];
-    //   }
-    //   // printf("%c",text[i]);
-    //   else if (buffer[i] == 10){
-    //     index = i+1;
-    //     printf("this is index %d \n", i+1);
-    //     break;
-    //   }
-    // }
-    // printf("text %s \n",text);
+    printf("text %s \n",text);
+    printf("key %s \n",key);
     // char key[256];
     // int start = 0;
     // for (int i = index; i < strlen(buffer); i++){
@@ -164,21 +135,6 @@ int main(int argc, char *argv[]){
     //   start++;
     // }
     
-    // FILE *fp  = fopen(text, "r"); // read only 
-    // char firstFile[1000]; 
-    // fgets(firstFile, 1000, (FILE*)fp);
-    // // printf("%s", strlen(line));
-    // fclose(fp);
-
-    // // char s[2] = "\n";
-    // // key = strtok(buffer, s);
-    // // printf("this is key %s \n",key);
-
-    // FILE *f  = fopen(key, "r"); // read only 
-    // char secondFile[1000]; 
-    // fgets(secondFile, 1000, (FILE*)f);
-    // // printf("%s", strlen(line));
-    // fclose(f);
 
     // printf(" textfile %s\n", firstFile);
     // printf("secibdfile %s\n", secondFile);

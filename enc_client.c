@@ -134,7 +134,10 @@ int main(int argc, char *argv[]) {
 
   // Send message to server
   // Write to the server
-  // strcat(secondFile, firstFile);
+  printf("length of second file is %d", strlen(secondFile));
+
+  strcat(secondFile, firstFile);
+  printf("length of first+second file is %d", strlen(secondFile));
   // char names[256];
   // strcpy(names, argv[1]);
   // strcat(names, "\n");
@@ -144,24 +147,30 @@ int main(int argc, char *argv[]) {
   while (index < strlen(secondFile))
   {
     memset(buffer, '\0', 100);
-    for (i = 0; i < strlen(secondFile); i++){
-      if(secondFile[index] != 10){
-        buffer[i] = secondFile[index];
-        index++;
-      }
-      else{
+    for (i = 0; i < 10; i++){
+      buffer[i] = secondFile[index];
+      if (index==strlen(secondFile)){
         buffer[i] = 64;
-        index = strlen(secondFile);
-        i = strlen(secondFile);
-        break;
       }
+      // if(secondFile[index] != 10){
+      //   buffer[i] = secondFile[index];
+      //   index++;
+      // }
+      // else{
+      //   buffer[i] = 64;
+      //   buffer[i+1] = '\0';
+      //   index = strlen(secondFile);
+      //   i = strlen(secondFile);
+      //   break;
+      // }
+      index++;
     }
-    printf("second file from client%s\n", buffer);
-    charsWritten = send(socketFD, buffer, index, 0); 
+    printf("second file from client: %s\n", buffer);
+    charsWritten = send(socketFD, buffer, 10, 0); 
     if (charsWritten < 0){
       error("CLIENT: ERROR writing to socket");
     }
-    if (charsWritten < strlen(secondFile)){
+    if (charsWritten < 0){
       printf("CLIENT: WARNING: Not all data written to socket!\n");
     }
   }
@@ -169,23 +178,24 @@ int main(int argc, char *argv[]) {
 
   // int j = 0;
   // int in = 0;
+  // char txt[1000];
   // while (in < strlen(firstFile))
   // {
   //   memset(buffer, '\0', 100);
   //   for (j = 0; j < strlen(firstFile); j++){
   //     if(firstFile[in] != 10){
-  //       buffer[j] = firstFile[in];
+  //       txt[j] = firstFile[in];
   //       in++;
   //     }
   //     else{
-  //       buffer[j] = 64;
+  //       txt[j] = 64;
   //       in = strlen(firstFile);
   //       j = strlen(firstFile);
   //       break;
   //     }
   //   }
-  //   printf("second file from client%s\n", buffer);
-  //   charsWritten = send(socketFD, buffer, in, 0); 
+  //   printf("first file from client%s\n", txt);
+  //   charsWritten = send(socketFD, txt, in, 0); 
   //   if (charsWritten < 0){
   //     error("CLIENT: ERROR writing to socket");
   //   }
