@@ -123,7 +123,9 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  
+  // printf("this is second file %s", secondFile);
+
+
   // // Clear out the buffer array
   // // Get input from the user, trunc to buffer - 1 chars, leaving \0
   // fgets(buffer, sizeof(buffer) - 1, stdin);
@@ -132,19 +134,65 @@ int main(int argc, char *argv[]) {
 
   // Send message to server
   // Write to the server
-  strcat(secondFile, firstFile);
-  char names[256];
-  strcpy(names, argv[1]);
-  strcat(names, "\n");
-  strcat(names, argv[2]);
+  // strcat(secondFile, firstFile);
+  // char names[256];
+  // strcpy(names, argv[1]);
+  // strcat(names, "\n");
+  // strcat(names, argv[2]);
+  int i = 0;
+  int index = 0;
+  while (index < strlen(secondFile))
+  {
+    memset(buffer, '\0', 100);
+    for (i = 0; i < strlen(secondFile); i++){
+      if(secondFile[index] != 10){
+        buffer[i] = secondFile[index];
+        index++;
+      }
+      else{
+        buffer[i] = 64;
+        index = strlen(secondFile);
+        i = strlen(secondFile);
+        break;
+      }
+    }
+    printf("second file from client%s\n", buffer);
+    charsWritten = send(socketFD, buffer, index, 0); 
+    if (charsWritten < 0){
+      error("CLIENT: ERROR writing to socket");
+    }
+    if (charsWritten < strlen(secondFile)){
+      printf("CLIENT: WARNING: Not all data written to socket!\n");
+    }
+  }
 
-  charsWritten = send(socketFD, names, strlen(secondFile), 0); 
-  if (charsWritten < 0){
-    error("CLIENT: ERROR writing to socket");
-  }
-  if (charsWritten < strlen(secondFile)){
-    printf("CLIENT: WARNING: Not all data written to socket!\n");
-  }
+
+  // int j = 0;
+  // int in = 0;
+  // while (in < strlen(firstFile))
+  // {
+  //   memset(buffer, '\0', 100);
+  //   for (j = 0; j < strlen(firstFile); j++){
+  //     if(firstFile[in] != 10){
+  //       buffer[j] = firstFile[in];
+  //       in++;
+  //     }
+  //     else{
+  //       buffer[j] = 64;
+  //       in = strlen(firstFile);
+  //       j = strlen(firstFile);
+  //       break;
+  //     }
+  //   }
+  //   printf("second file from client%s\n", buffer);
+  //   charsWritten = send(socketFD, buffer, in, 0); 
+  //   if (charsWritten < 0){
+  //     error("CLIENT: ERROR writing to socket");
+  //   }
+  //   if (charsWritten < strlen(firstFile)){
+  //     printf("CLIENT: WARNING: Not all data written to socket!\n");
+  //   }
+  // }
 
   // Get return message from server
   // Clear out the buffer again for reuse
