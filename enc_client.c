@@ -45,9 +45,9 @@ void setupAddressStruct(struct sockaddr_in* address,
 }
 
 int main(int argc, char *argv[]) {
-  int socketFD, portNumber, charsWritten, charsRead, charsWritten2;
+  int socketFD, portNumber, charsWritten, charsRead;
   struct sockaddr_in serverAddress;
-  char buffer[256];
+  char buffer[2000];
   // Check usage & args
   if (argc < 3) { 
     fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); 
@@ -69,17 +69,26 @@ int main(int argc, char *argv[]) {
   if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0){
     error("CLIENT: ERROR connecting");
   }
+
+  charsWritten = send(socketFD, "e", 2, 0); 
+  if (charsWritten < 0){
+    error("CLIENT: ERROR writing to socket");
+  }
+  if (charsWritten < 1){
+    printf("CLIENT: WARNING: Not all data written to socket!\n");
+  }
+
   // Get input message from user
   // printf("CLIENT: Enter text to send to the server, and then hit enter: ");
   FILE *fp  = fopen(argv[1], "r"); // read only 
-  char firstFile[70000]; 
-  fgets(firstFile, 70000, (FILE*)fp);
+  char firstFile[71000]; 
+  fgets(firstFile, 71000, (FILE*)fp);
   // printf("%s", strlen(line));
   fclose(fp);
 
   FILE *f  = fopen(argv[2], "r"); // read only 
-  char secondFile[70000]; 
-  fgets(secondFile, 70000, (FILE*)f);
+  char secondFile[71000]; 
+  fgets(secondFile, 71000, (FILE*)f);
   // printf("%s", text );
   fclose(f);
 
@@ -93,26 +102,24 @@ int main(int argc, char *argv[]) {
       {
         if (firstFile[i] != 10)
         {
-          printf("1character%i at index %d",firstFile[i], i);
           fprintf(stderr,"found a bad character\n");
           exit(1);
         }
       }
     }
     else if (90 < firstFile[i]) {
-        printf("2character%c at index %d",firstFile[i], i);
         fprintf(stderr,"found a bad character\n");
         exit(1);
     }
   }
-  printf("this is end of firstfile %s\n", firstFile);
+  // printf("this is end of firstfile %s\n", firstFile);
   for (int i = 0; i < strlen(secondFile); i++){
     if (65 > secondFile[i]) {
       if (secondFile[i] != 32)
       {
         if (secondFile[i] != 10)
         {
-        fprintf(stderr,"1found a bad character in key %s at index %i\n",secondFile[i], i);
+        fprintf(stderr,"found a bad character in key \n");
         exit(1);
         }
 
@@ -123,13 +130,13 @@ int main(int argc, char *argv[]) {
       {
         if (secondFile[i] != 10)
         {
-        fprintf(stderr,"2found a bad character in key %c at index %i\n",secondFile[i], i);
+        fprintf(stderr,"found a bad character in key \n");
         exit(1);
         }
       }
     }
   }
-  printf("this is end of ss  %s\n", secondFile);
+  // printf("this is end of ss  %s\n", secondFile);
   // printf("this is second file %s", secondFile);
 
 
@@ -142,8 +149,15 @@ int main(int argc, char *argv[]) {
   // Send message to server
   // Write to the server
   // printf("length of second file is %d", strlen(secondFile));
+  char temp[2000];
+  memset(temp, '\0', 2000);
+  memmove(temp, secondFile, strlen(firstFile)+1);
+  int k = strlen(firstFile)+1;
 
-  strcat(secondFile, firstFile);
+  temp[k] = 10;
+
+  strcat(temp, firstFile);
+
   // printf("length of first+second file is %d", strlen(secondFile));
   // char names[256];
   // strcpy(names, argv[1]);
@@ -151,12 +165,12 @@ int main(int argc, char *argv[]) {
   // strcat(names, argv[2]);
   int i = 0;
   int index = 0;
-  while (index < strlen(secondFile))
+  while (index < strlen(temp))
   {
-    memset(buffer, '\0', 100);
-    for (i = 0; i < 10; i++){
-      buffer[i] = secondFile[index];
-      if (index==strlen(secondFile)-1){
+    memset(buffer, '\0', 2000);
+    for (i = 0; i < 1000; i++){
+      buffer[i] = temp[index];
+      if (index==strlen(temp)-1){
         buffer[i] = 64;
       }
       // if(secondFile[index] != 10){
@@ -172,8 +186,8 @@ int main(int argc, char *argv[]) {
       // }
       index++;
     }
-    printf("buffer from client: %s\n", buffer);
-    charsWritten = send(socketFD, buffer, 10, 0); 
+    // printf("buffer from client: %s\n", buffer);
+    charsWritten = send(socketFD, buffer, 1000, 0); 
     if (charsWritten < 0){
       error("CLIENT: ERROR writing to socket");
     }
@@ -213,19 +227,26 @@ int main(int argc, char *argv[]) {
 
   // Get return message from server
   // Clear out the buffer again for reuse
-  memset(secondFile, '\0', sizeof(secondFile));
-  // Read data from the socket, leaving \0 at end
-  charsRead = recv(socketFD, secondFile, sizeof(secondFile) - 1, 0); 
-  if (charsRead < 0){
-    error("CLIENT: ERROR reading from socket");
-  }
-  if (argc > 4){
-    FILE *file  = fopen(argv[5], "r"); // read only 
- // open dev null for exec
-    printf("%s\n", secondFile);
-  }
-  else{
-    printf("%s", secondFile);
+  int num;
+  num = strlen(firstFile);
+  num = num/1000;
+  num++;
+
+  for (int n = 0; n < num; n++)
+  {
+    memset(secondFile, '\0', 71000);
+    // Read data from the socket, leaving \0 at end
+    charsRead = recv(socketFD, secondFile, 1000, 0); 
+    if (charsRead < 0){
+      error("CLIENT: ERROR reading from socket");
+    }
+    if (argc > 4){
+      FILE *file  = fopen(argv[5], "r"); // read only 
+      printf("%s", secondFile);
+    }
+    else{
+      printf("%s", secondFile);
+    }
   }
   // Close the socket
   close(socketFD); 

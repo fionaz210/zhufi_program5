@@ -47,7 +47,7 @@ void setupAddressStruct(struct sockaddr_in* address,
 int main(int argc, char *argv[]) {
   int socketFD, portNumber, charsWritten, charsRead;
   struct sockaddr_in serverAddress;
-  char buffer[256];
+  char buffer[2000];
   // Check usage & args
   if (argc < 3) { 
     fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); 
@@ -61,36 +61,155 @@ int main(int argc, char *argv[]) {
   }
 
    // Set up the server address struct
-  setupAddressStruct(&serverAddress, atoi(argv[2]), argv[1]);
+  setupAddressStruct(&serverAddress, atoi(argv[3]), "localhost");
 
   // Connect to server
   if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0){
     error("CLIENT: ERROR connecting");
   }
-  // Get input message from user
-  printf("CLIENT: Enter text to send to the server, and then hit enter: ");
-  // Clear out the buffer array
-  memset(buffer, '\0', sizeof(buffer));
-  // Get input from the user, trunc to buffer - 1 chars, leaving \0
-  fgets(buffer, sizeof(buffer) - 1, stdin);
-  // Remove the trailing \n that fgets adds
-  buffer[strcspn(buffer, "\n")] = '\0'; 
+
+  // charsWritten = send(socketFD, "a", 2, 0); 
+  // if (charsWritten < 0){
+  //   error("CLIENT: ERROR writing to socket");
+  // }
+  // if (charsWritten < 1){
+  //   printf("CLIENT: WARNING: Not all data written to socket!\n");
+  // }
+
+  FILE *fp  = fopen(argv[1], "r"); // read only 
+  char firstFile[71000]; 
+  fgets(firstFile, 71000, (FILE*)fp);
+  // printf("%s", strlen(line));
+  fclose(fp);
+
+  FILE *f  = fopen(argv[2], "r"); // read only 
+  char secondFile[71000]; 
+  fgets(secondFile, 71000, (FILE*)f);
+  // printf("%s", text );
+  fclose(f);
+
+  // printf("ff %s",firstFile);
+  // printf("ss %s",secondFile);
+
+  // if (strlen(secondFile) < strlen(firstFile)){
+  //     fprintf(stderr,"key file is too short!\n");
+  //     exit(1);
+  // }
+  // for (int i = 0; i < strlen(firstFile); i++){
+  //   if (65 > firstFile[i]) {
+  //     if (firstFile[i] != 32)
+  //     {
+  //       if (firstFile[i] != 10)
+  //       {
+  //         fprintf(stderr,"found a bad character\n");
+  //         exit(1);
+  //       }
+  //     }
+  //   }
+  //   else if (90 < firstFile[i]) {
+  //       fprintf(stderr,"found a bad character\n");
+  //       exit(1);
+  //   }
+  // }
+  // // printf("this is end of firstfile %s\n", firstFile);
+  // for (int i = 0; i < strlen(secondFile); i++){
+  //   if (65 > secondFile[i]) {
+  //     if (secondFile[i] != 32)
+  //     {
+  //       if (secondFile[i] != 10)
+  //       {
+  //       fprintf(stderr,"found a bad character in key \n");
+  //       exit(1);
+  //       }
+
+  //     }
+  //   }
+  //   else if (90 < secondFile[i]) {
+  //     if (secondFile[i] != 32)
+  //     {
+  //       if (secondFile[i] != 10)
+  //       {
+  //       fprintf(stderr,"2found a bad character in key \n");
+  //       exit(1);
+  //       }
+  //     }
+  //   }
+  // }
+  // printf("this is end of ss  %s\n", secondFile);
+  // printf("this is second file %s", secondFile);
+
+
+  // // Clear out the buffer array
+  // // Get input from the user, trunc to buffer - 1 chars, leaving \0
+  // fgets(buffer, sizeof(buffer) - 1, stdin);
+  // // Remove the trailing \n that fgets adds
+  // buffer[strcspn(buffer, "\n")] = '\0'; 
 
   // Send message to server
   // Write to the server
-  charsWritten = send(socketFD, buffer, strlen(buffer), 0); 
+  // printf("length of second file is %d", strlen(secondFile));
+  char data[2000];
+  memmove(data, secondFile, strlen(firstFile)+1);
+  int k = strlen(firstFile)+1;
+
+  data[k] = 10;
+
+  strcat(data, firstFile);
+  
+  // int a = strlen(temp);
+
+  // printf("length of first+second file is %d", strlen(secondFile));
+  // char names[256];
+  // strcpy(names, argv[1]);
+  // strcat(names, "\n");
+  // strcat(names, argv[2]);
+  int i = 0;
+  int index = 0;
+  // printf("this is data from dec_client %s", data);
+  while (index < strlen(data))
+  {
+    memset(buffer, '\0', 2000);
+    for (i = 0; i < 1000; i++){
+      printf("%d",i);
+      buffer[i] = data[index];
+      if (index==strlen(data)-1){
+        buffer[i] = 64;
+      }
+  //     // if(secondFile[index] != 10){
+  //     //   buffer[i] = secondFile[index];
+  //     //   index++;
+  //     // }
+  //     // else{
+  //     //   buffer[i] = 64;
+  //     //   buffer[i+1] = '\0';
+  //     //   index = strlen(secondFile);
+  //     //   i = strlen(secondFile);
+  //     //   break;
+  //     // }
+      index++;
+    }
+
+  // Send message to server
+  // Write to the server
+  printf("this4355lient");
+  printf("this is buffer from dec_client %s", buffer);
+  charsWritten = send(socketFD, buffer, 1000, 0); 
   if (charsWritten < 0){
     error("CLIENT: ERROR writing to socket");
   }
   if (charsWritten < strlen(buffer)){
     printf("CLIENT: WARNING: Not all data written to socket!\n");
   }
-
+}
+  int num;
+  num = strlen(firstFile);
+  num = num/1000;
+  num++;
   // Get return message from server
   // Clear out the buffer again for reuse
-  memset(buffer, '\0', sizeof(buffer));
+  memset(buffer, '\0', 1000);
   // Read data from the socket, leaving \0 at end
-  charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
+  charsRead = recv(socketFD, buffer, 1000, 0); 
   if (charsRead < 0){
     error("CLIENT: ERROR reading from socket");
   }
