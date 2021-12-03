@@ -77,7 +77,6 @@ int main(int argc, char *argv[]){
     char data[10];
 
     charsRead = recv(connectionSocket, data, 2, 0); 
-    // printf("this is data %s\n", data);
     if (charsRead < 0){
       error("ERROR reading from socket");
     }
@@ -88,7 +87,6 @@ int main(int argc, char *argv[]){
     { 
       memset(buffer, '\0', 100);
       charsRead = recv(connectionSocket, buffer, 1000, 0); 
-      // printf("this is buffer %s\n", buffer);
       if (charsRead < 0){
         error("ERROR reading from socket");
       }
@@ -103,8 +101,6 @@ int main(int argc, char *argv[]){
         }
       }
     }
-    printf("this is copy %s\n", copy);
-
 
     int index;
     char key[70000];
@@ -112,10 +108,8 @@ int main(int argc, char *argv[]){
       if (copy[i] != 10){
       key[i] = copy[i];
       }
-      // printf("%c",text[i]);
       else if (copy[i] == 10){
         index = i+1;
-        printf("this is index %d \n", i+1);
         break;
       }
     }
@@ -126,33 +120,15 @@ int main(int argc, char *argv[]){
       text[i] = copy[index];
       i++;
       }
-      // printf("%c",text[i]);
       else if (copy[index] == 64){
         break;
       }
     }
 
-    printf("text %s \n",text);
     int length = strlen(text);
-    printf("%d",length);
-    printf("key %s \n",key);
-    
-    // char key[256];
-    // int start = 0;
-    // for (int i = index; i < strlen(buffer); i++){
-    //   key[start] = buffer[i];
-    //   start++;
-    // }
-    
-
-    // printf(" textfile %s\n", firstFile);
-    // printf("secibdfile %s\n", secondFile);
 
     char cipher[70000];
-    // char uncipher[70000];
-    // char spaces[70000];
-    // int t = 0;
-    // int s = 0;
+
     int x = 0;
     for(int i = 0; i < strlen(text); i++){
       if (text[i] == 32){
@@ -171,30 +147,7 @@ int main(int argc, char *argv[]){
       x++;
       }
     }
-    printf("cipher %s\n", cipher);
 
-    // charsRead = recv(connectionSocket, buffer, 256, 0); 
-    // if (charsRead < 0){
-    //   error("ERROR reading from socket");
-    // }
-
-    // FILE *f  = fopen(buffer, "r"); // read only 
-    // printf("this is second buffer aka key %s", buffer);
-    // char secondFile[70000]; 
-    // fgets(secondFile, 70000, (FILE*)f);
-    // // printf("%s", strlen(line));
-    // fclose(f);
-
-
-    // for(int i = 0; i < strlen(text); i++){
-    //   text[i] = text[i] + key[i] - 65;
-    //   if (text[i] > 90){
-    //     text[i] -= 26;
-    //   }
-    // }
-
-
-    printf("SERVER: I received this from the client: \n");
 
 
     // Send a Success message back to the client
