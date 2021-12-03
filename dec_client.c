@@ -88,8 +88,8 @@ int main(int argc, char *argv[]) {
   // printf("%s", text );
   fclose(f);
 
-  // printf("ff %s",firstFile);
-  // printf("ss %s",secondFile);
+  printf("ff %s",firstFile);
+  printf("ss %s",secondFile);
 
   // if (strlen(secondFile) < strlen(firstFile)){
   //     fprintf(stderr,"key file is too short!\n");

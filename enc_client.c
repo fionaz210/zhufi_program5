@@ -70,13 +70,13 @@ int main(int argc, char *argv[]) {
     error("CLIENT: ERROR connecting");
   }
 
-  charsWritten = send(socketFD, "e", 2, 0); 
-  if (charsWritten < 0){
-    error("CLIENT: ERROR writing to socket");
-  }
-  if (charsWritten < 1){
-    printf("CLIENT: WARNING: Not all data written to socket!\n");
-  }
+  // charsWritten = send(socketFD, "e", 2, 0); 
+  // if (charsWritten < 0){
+  //   error("CLIENT: ERROR writing to socket");
+  // }
+  // if (charsWritten < 1){
+  //   printf("CLIENT: WARNING: Not all data written to socket!\n");
+  // }
 
   // Get input message from user
   // printf("CLIENT: Enter text to send to the server, and then hit enter: ");
@@ -85,12 +85,14 @@ int main(int argc, char *argv[]) {
   fgets(firstFile, 71000, (FILE*)fp);
   // printf("%s", strlen(line));
   fclose(fp);
+  printf("this is second file %s", firstFile);
 
   FILE *f  = fopen(argv[2], "r"); // read only 
   char secondFile[71000]; 
   fgets(secondFile, 71000, (FILE*)f);
   // printf("%s", text );
   fclose(f);
+  printf("this is second file %s", secondFile);
 
   if (strlen(secondFile) < strlen(firstFile)){
       fprintf(stderr,"key file is too short!\n");
@@ -112,7 +114,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
   }
-  // printf("this is end of firstfile %s\n", firstFile);
+  printf("this is end of firstfile %s\n", firstFile);
   for (int i = 0; i < strlen(secondFile); i++){
     if (65 > secondFile[i]) {
       if (secondFile[i] != 32)
@@ -137,7 +139,7 @@ int main(int argc, char *argv[]) {
     }
   }
   // printf("this is end of ss  %s\n", secondFile);
-  // printf("this is second file %s", secondFile);
+  
 
 
   // // Clear out the buffer array
@@ -186,7 +188,7 @@ int main(int argc, char *argv[]) {
       // }
       index++;
     }
-    // printf("buffer from client: %s\n", buffer);
+    printf("buffer from client: %s\n", buffer);
     charsWritten = send(socketFD, buffer, 1000, 0); 
     if (charsWritten < 0){
       error("CLIENT: ERROR writing to socket");
@@ -232,8 +234,8 @@ int main(int argc, char *argv[]) {
   num = num/1000;
   num++;
 
-  for (int n = 0; n < num; n++)
-  {
+  // for (int n = 0; n < num; n++)
+  // {
     memset(secondFile, '\0', 71000);
     // Read data from the socket, leaving \0 at end
     charsRead = recv(socketFD, secondFile, 1000, 0); 
@@ -247,7 +249,7 @@ int main(int argc, char *argv[]) {
     else{
       printf("%s", secondFile);
     }
-  }
+  // }
   // Close the socket
   close(socketFD); 
   return 0;

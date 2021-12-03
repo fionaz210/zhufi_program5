@@ -76,20 +76,21 @@ int main(int argc, char *argv[]){
     // Read the client's message from the socket
     char data[10];
 
-    charsRead = recv(connectionSocket, data, 2, 0); 
-    // printf("this is data %s\n", data);
-    if (charsRead < 0){
-      error("ERROR reading from socket");
-    }
+    // charsRead = recv(connectionSocket, data, 2, 0); 
+    // // printf("this is data %s\n", data);
+    // if (charsRead < 0){
+    //   error("ERROR reading from socket");
+    // }
 
     int term = 0;
     int counter = 0;
-    char copy[150000];
-    while(term != 1)
+    char copy[15000];
+    // copy = (char*)calloc(150000, sizeof(char));
+    while(term < 0)
     { 
       memset(buffer, '\0', 2000);
       charsRead = recv(connectionSocket, buffer, 1000, 0); 
-      // printf("this is buffer %s\n", buffer);
+      printf("this is buffer %s\n", buffer);
       if (charsRead < 0){
         error("ERROR reading from socket");
       }
@@ -98,6 +99,8 @@ int main(int argc, char *argv[]){
         if (buffer[i] != 64){
           copy[counter] = buffer[i];
           counter++;
+          term+=1;
+          break;
         }
         else{
           term = 1;
@@ -105,12 +108,14 @@ int main(int argc, char *argv[]){
         }
       }
     }
-    // printf("this is copy %s\n", copy);
-    // printf("this is copy length %d\n", strlen(copy));
+    printf("this is copy %s\n", copy);
+    printf("this is copy length %d\n", strlen(copy));
 
     int index;
+    // char key[71000];
     char key[71000];
-    memset(key, '\0', 71000);
+    // key = (char*)calloc(71000, sizeof(char));
+    // memset(key, '\0', 71000);
 
     for (int i = 0; i < strlen(copy); i++){
       if (copy[i] != 10){
@@ -118,25 +123,28 @@ int main(int argc, char *argv[]){
       }
       else if (copy[i] == 10){
         index = i+1;
-        // printf("this is index %d \n", i+1);
+        printf("this is index %d \n", i+1);
         break;
       }
     }
+    printf("key %s \n",key);
+    printf("copy %s \n",copy);
     int i = 0;
     char text[71000];
-    memset(text, '\0', 71000);
+    // char *text;
+    // text = (char*)calloc(71000, sizeof(char));
+    // memset(text, '\0', 71000);
     for (index; index < strlen(copy); index++){
       if (copy[index] != 64){
       text[i] = copy[index];
       i++;
       }
-      // printf("%c",text[i]);
       else if (copy[index] == 64){
         break;
       }
     }
-    // printf("text %s \n",text);
-    // printf("key %s \n",key);
+    printf("text %s \n",text);
+
     // char key[256];
     // int start = 0;
     // for (int i = index; i < strlen(buffer); i++){
@@ -148,15 +156,15 @@ int main(int argc, char *argv[]){
     // printf(" textfile %s\n", firstFile);
     // printf("secibdfile %s\n", secondFile);
 
-    char cipher[71000];
-    memset(cipher, '\0', 71000);
-    // char uncipher[71000];
-    // char spaces[70000];
-    // int t = 0;
-    // int s = 0;
+    char *cipher;
+    cipher = (char*)calloc(71000, sizeof(char));
+    // // char uncipher[71000];
+    // // char spaces[70000];
+    // // int t = 0;
+    // // int s = 0;
     int x = 0;
-    for(int i = 0; i < strlen(text); i++){
-      // printf("i in for loop %d",i);
+    for(int i = 0; i < 3; i++){
+      printf("i in for loop %d",i);
       if (text[i] == 32){
         cipher[x] = 32;
         x++;
@@ -168,10 +176,7 @@ int main(int argc, char *argv[]){
         x++;
       }
       else{ 
-      printf("key %s\n",key[i]);
-      printf("text%s\n",text[i]);
       cipher[x] = key[i] + text[i] - 65;
-      printf("cipher %s\n", cipher[x]);
       if (cipher[x] > 90){
         cipher[x] -= 26;
       }
@@ -179,13 +184,12 @@ int main(int argc, char *argv[]){
       }
     }
     cipher[strlen(cipher)] = 10;
-    printf("cipher %s", cipher);
     int num;
     num = x/1000;
     num++;
     // printf("this is num%d", num);
-    // printf("cipher %s\n", cipher);
-
+    printf("cipher %s!\n", cipher);
+    printf("this is key %s \n",key);
     // charsRead = recv(connectionSocket, buffer, 256, 0); 
     // if (charsRead < 0){
     //   error("ERROR reading from socket");
