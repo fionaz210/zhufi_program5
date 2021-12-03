@@ -29,7 +29,7 @@ void setupAddressStruct(struct sockaddr_in* address,
 
 int main(int argc, char *argv[]){
   int connectionSocket, charsRead;
-  char buffer[2000];
+  char buffer[1000];
   struct sockaddr_in serverAddress, clientAddress;
   socklen_t sizeOfClientInfo = sizeof(clientAddress);
 
@@ -68,39 +68,34 @@ int main(int argc, char *argv[]){
       error("ERROR on accept");
     }
 
-    // printf("SERVER: Connected to client running at host %d port %d\n", 
-    //                       ntohs(clientAddress.sin_addr.s_addr),
-    //                       ntohs(clientAddress.sin_port));
+    printf("SERVER: Connected to client running at host %d port %d\n", 
+                          ntohs(clientAddress.sin_addr.s_addr),
+                          ntohs(clientAddress.sin_port));
 
     // Get the message from the client and display it
     // Read the client's message from the socket
     char data[10];
 
-    // charsRead = recv(connectionSocket, data, 2, 0); 
-    // // printf("this is data %s\n", data);
-    // if (charsRead < 0){
-    //   error("ERROR reading from socket");
-    // }
-
+    charsRead = recv(connectionSocket, data, 2, 0); 
+    // printf("this is data %s\n", data);
+    if (charsRead < 0){
+      error("ERROR reading from socket");
+    }
     int term = 0;
     int counter = 0;
-    char copy[15000];
-    // copy = (char*)calloc(150000, sizeof(char));
-    while(term < 0)
+    char copy[70000];
+    while(term != 1)
     { 
-      memset(buffer, '\0', 2000);
+      memset(buffer, '\0', 100);
       charsRead = recv(connectionSocket, buffer, 1000, 0); 
-      printf("this is buffer %s\n", buffer);
+      // printf("this is buffer %s\n", buffer);
       if (charsRead < 0){
         error("ERROR reading from socket");
       }
-      // printf("%s",buffer);
       for (int i = 0; i < strlen(buffer); i++){
         if (buffer[i] != 64){
           copy[counter] = buffer[i];
           counter++;
-          term+=1;
-          break;
         }
         else{
           term = 1;
@@ -109,42 +104,39 @@ int main(int argc, char *argv[]){
       }
     }
     printf("this is copy %s\n", copy);
-    printf("this is copy length %d\n", strlen(copy));
+
 
     int index;
-    // char key[71000];
-    char key[71000];
-    // key = (char*)calloc(71000, sizeof(char));
-    // memset(key, '\0', 71000);
-
+    char key[70000];
     for (int i = 0; i < strlen(copy); i++){
       if (copy[i] != 10){
       key[i] = copy[i];
       }
+      // printf("%c",text[i]);
       else if (copy[i] == 10){
         index = i+1;
         printf("this is index %d \n", i+1);
         break;
       }
     }
-    printf("key %s \n",key);
-    printf("copy %s \n",copy);
     int i = 0;
-    char text[71000];
-    // char *text;
-    // text = (char*)calloc(71000, sizeof(char));
-    // memset(text, '\0', 71000);
+    char text[70000];
     for (index; index < strlen(copy); index++){
       if (copy[index] != 64){
       text[i] = copy[index];
       i++;
       }
+      // printf("%c",text[i]);
       else if (copy[index] == 64){
         break;
       }
     }
-    printf("text %s \n",text);
 
+    printf("text %s \n",text);
+    int length = strlen(text);
+    printf("%d",length);
+    printf("key %s \n",key);
+    
     // char key[256];
     // int start = 0;
     // for (int i = index; i < strlen(buffer); i++){
@@ -156,22 +148,18 @@ int main(int argc, char *argv[]){
     // printf(" textfile %s\n", firstFile);
     // printf("secibdfile %s\n", secondFile);
 
-    char *cipher;
-    cipher = (char*)calloc(71000, sizeof(char));
-    // // char uncipher[71000];
-    // // char spaces[70000];
-    // // int t = 0;
-    // // int s = 0;
+    char cipher[70000];
+    // char uncipher[70000];
+    // char spaces[70000];
+    // int t = 0;
+    // int s = 0;
     int x = 0;
-    for(int i = 0; i < 3; i++){
-      printf("i in for loop %d",i);
+    for(int i = 0; i < strlen(text); i++){
       if (text[i] == 32){
         cipher[x] = 32;
         x++;
       }      
       else if (key[i] == 32){
-        // printf("key %c\n",key[i]);
-        // printf("text %c\n",text[i]);
         cipher[x] = text[i];
         x++;
       }
@@ -183,13 +171,8 @@ int main(int argc, char *argv[]){
       x++;
       }
     }
-    cipher[strlen(cipher)] = 10;
-    int num;
-    num = x/1000;
-    num++;
-    // printf("this is num%d", num);
-    printf("cipher %s!\n", cipher);
-    printf("this is key %s \n",key);
+    printf("cipher %s\n", cipher);
+
     // charsRead = recv(connectionSocket, buffer, 256, 0); 
     // if (charsRead < 0){
     //   error("ERROR reading from socket");
@@ -211,17 +194,14 @@ int main(int argc, char *argv[]){
     // }
 
 
-    // printf("SERVER: I received this from the client: \n");
+    printf("SERVER: I received this from the client: \n");
 
 
     // Send a Success message back to the client
-    for (int n = 0; n < num; n++)
-    { 
-      charsRead = send(connectionSocket, 
-                      cipher, 1000, 0); 
-      if (charsRead < 0){
-        error("ERROR writing to socket");
-      }
+    charsRead = send(connectionSocket, 
+                    cipher, 1000, 0); 
+    if (charsRead < 0){
+      error("ERROR writing to socket");
     }
     // Close the connection socket for this client
     close(connectionSocket); 
